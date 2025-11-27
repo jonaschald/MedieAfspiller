@@ -1,11 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.medieafspiller.myTunesController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
-</VBox>
+
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mytunesprojekt3.MyTumesController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="400.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <children>
+            <Label text="Songs">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <TableView fx:id="songListe" prefHeight="400.0" prefWidth="200.0">
+              <columns>
+                <TableColumn fx:id="songName" minWidth="100.0" prefWidth="75.0" text="Name" />
+                <TableColumn fx:id="songArtist" minWidth="200.0" prefWidth="75.0" text="Artist" />
+                  <TableColumn fx:id="songLenght" minWidth="50.0" prefWidth="75.0" text="Lenght" />
+              </columns>
+               <opaqueInsets>
+                  <Insets left="5.0" right="5.0" />
+               </opaqueInsets>
+            </TableView>
+         </children>
+         <HBox.margin>
+            <Insets left="5.0" right="5.0" />
+         </HBox.margin>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="400.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <children>
+            <Label text="Playlister">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <TableView fx:id="playlister" prefHeight="400.0" prefWidth="200.0">
+              <columns>
+                <TableColumn fx:id="nameOfPlaylist" minWidth="150.0" prefWidth="75.0" text="Name of Playlist" />
+                <TableColumn fx:id="numberOfSongsOnPlaylist" minWidth="150.0" prefWidth="75.0" text="Number of songs" />
+                  <TableColumn fx:id="lenghtOfPlaylist" minWidth="50.0" prefWidth="75.0" text="Lenght" />
+              </columns>
+            </TableView>
+         </children>
+         <HBox.margin>
+            <Insets left="5.0" right="5.0" />
+         </HBox.margin>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="400.0">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <children>
+            <Label text="Songs on Playlist">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <TableView prefHeight="400.0" prefWidth="200.0">
+              <columns>
+                <TableColumn fx:id="sOPName" minWidth="100.0" prefWidth="75.0" text="Name" />
+                <TableColumn fx:id="sOPArtist" minWidth="200.0" prefWidth="75.0" text="Artist" />
+                  <TableColumn fx:id="sOPLenght" minWidth="50.0" prefWidth="75.0" text="Lenght" />
+              </columns>
+            </TableView>
+         </children>
+         <HBox.margin>
+            <Insets left="5.0" right="5.0" />
+         </HBox.margin>
+      </VBox>
+   </children>
+   <opaqueInsets>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </opaqueInsets>
+</HBox>
