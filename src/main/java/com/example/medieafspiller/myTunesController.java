@@ -21,7 +21,7 @@ public class myTunesController {
     private ImageView back;
 
     @FXML
-    private TableColumn<Playlist, String> lenghtOfPlaylist;
+    private TableColumn<Playlist, String> lengthOfPlaylist;
 
     @FXML
     private TableColumn<Playlist, String> nameOfPlaylist;
@@ -45,7 +45,7 @@ public class myTunesController {
     private TableColumn<Song, String> sOPArtist;
 
     @FXML
-    private TableColumn<Song, String> sOPLenght;
+    private TableColumn<Song, String> sOPLength;
 
     @FXML
     private TableColumn<Song, String> sOPName;
@@ -57,7 +57,7 @@ public class myTunesController {
     private TableColumn<Song, String> songArtist;
 
     @FXML
-    private TableColumn<Song, String> songLenght;
+    private TableColumn<Song, String> songLength;
 
     @FXML
     private TableView<Song> songListe = new TableView<>();
@@ -69,15 +69,15 @@ public class myTunesController {
     private void initialize() {
         songName.setCellValueFactory(new PropertyValueFactory<Song, String>("songName"));
         songArtist.setCellValueFactory(new PropertyValueFactory<Song, String>("songArtist"));
-        songLenght.setCellValueFactory(new PropertyValueFactory<Song, String>("songLenght"));
+        songLength.setCellValueFactory(new PropertyValueFactory<Song, String>("songLength"));
 
         nameOfPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("nameOfPlaylist"));
         numberOfSongsOnPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("numberOfSongsOnPlaylist"));
-        lenghtOfPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("lenghtOgPlaylist"));
+        lengthOfPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("lengthOgPlaylist"));
 
         sOPName.setCellValueFactory(new PropertyValueFactory<Song, String>("songName"));
         sOPArtist.setCellValueFactory(new PropertyValueFactory<Song, String>("songArtist"));
-        sOPLenght.setCellValueFactory(new PropertyValueFactory<Song, String>("songLenght"));
+        sOPLength.setCellValueFactory(new PropertyValueFactory<Song, String>("songLength"));
     }
 
     @FXML

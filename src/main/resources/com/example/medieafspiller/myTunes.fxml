@@ -45,7 +45,7 @@
          <columns>
             <TableColumn fx:id="sOPName" minWidth="150.0" prefWidth="150.0" text="Name" />
             <TableColumn fx:id="sOPArtist" minWidth="200.0" prefWidth="200.0" text="Artist" />
-            <TableColumn fx:id="sOPLenght" minWidth="75.0" prefWidth="75.0" text="Lenght" />
+            <TableColumn fx:id="sOPLength" minWidth="75.0" prefWidth="75.0" text="Length" />
          </columns>
          <GridPane.margin>
             <Insets left="5.0" right="5.0" />
@@ -55,7 +55,7 @@
          <columns>
             <TableColumn fx:id="nameOfPlaylist" minWidth="150.0" prefWidth="150.0" text="Name of Playlist" />
             <TableColumn fx:id="numberOfSongsOnPlaylist" minWidth="200.0" prefWidth="200.0" text="Number of songs" />
-            <TableColumn fx:id="lenghtOfPlaylist" minWidth="75.0" prefWidth="75.0" text="Lenght" />
+            <TableColumn fx:id="lengthOfPlaylist" minWidth="75.0" prefWidth="75.0" text="Length" />
          </columns>
          <GridPane.margin>
             <Insets left="5.0" right="5.0" />
@@ -75,7 +75,7 @@
          <columns>
             <TableColumn fx:id="songName" minWidth="100.0" prefWidth="150.0" text="Name" />
             <TableColumn fx:id="songArtist" minWidth="200.0" prefWidth="200.0" text="Artist" />
-            <TableColumn fx:id="songLenght" minWidth="50.0" prefWidth="75.0" text="Lenght" />
+            <TableColumn fx:id="songLength" minWidth="50.0" prefWidth="75.0" text="Length" />
          </columns>
          <opaqueInsets>
             <Insets left="5.0" right="5.0" />
