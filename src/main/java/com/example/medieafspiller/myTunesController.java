@@ -126,6 +126,11 @@ public class myTunesController {
     }
 
     @FXML
+    void deletePlaylistSong(ActionEvent event) {
+
+    }
+
+    @FXML
     void deleteSong(ActionEvent event) {
 
     }

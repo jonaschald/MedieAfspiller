@@ -30,53 +30,32 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0" GridPane.columnIndex="2">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <TextField fx:id="searchField" alignment="TOP_LEFT" promptText="Search">
-               <font>
-                  <Font size="13.0" />
-               </font></TextField>
-            <Button mnemonicParsing="false" onAction="#search" text="Search">
+            <Button mnemonicParsing="false" onAction="#newSong" text="New Song">
                <font>
                   <Font size="13.0" />
                </font></Button>
+            <Button mnemonicParsing="false" onAction="#editSong" text="Edit Song">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#addToPlaylist" text="Add to playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#deleteSong" text="Delete Song">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
          </children>
       </HBox>
-      <Label text="Songs on Playlist" GridPane.columnIndex="2" GridPane.rowIndex="1">
+      <Label text="Songs" GridPane.rowIndex="1">
          <font>
             <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <TableView fx:id="songsOnPlaylist" prefHeight="400.0" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-         <columns>
-            <TableColumn fx:id="sOPName" minWidth="150.0" prefWidth="150.0" text="Name" />
-            <TableColumn fx:id="sOPArtist" minWidth="200.0" prefWidth="200.0" text="Artist" />
-            <TableColumn fx:id="sOPLength" minWidth="75.0" prefWidth="75.0" text="Length" />
-         </columns>
-         <GridPane.margin>
-            <Insets left="5.0" right="5.0" />
-         </GridPane.margin>
-      </TableView>
-      <TableView fx:id="playlister" prefHeight="400.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-         <columns>
-            <TableColumn fx:id="nameOfPlaylist" minWidth="150.0" prefWidth="150.0" text="Name of Playlist" />
-            <TableColumn fx:id="numberOfSongsOnPlaylist" minWidth="200.0" prefWidth="200.0" text="Number of songs" />
-            <TableColumn fx:id="lengthOfPlaylist" minWidth="75.0" prefWidth="75.0" text="Length" />
-         </columns>
-         <GridPane.margin>
-            <Insets left="5.0" right="5.0" />
-         </GridPane.margin>
-      </TableView>
-      <Label text="Playlister" GridPane.columnIndex="1" GridPane.rowIndex="1">
-         <font>
-            <Font name="System Bold" size="24.0" />
-         </font>
-      </Label>
-      <ProgressBar prefWidth="400.0" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-         <GridPane.margin>
-            <Insets left="5.0" right="5.0" />
-         </GridPane.margin>
-      </ProgressBar>
       <TableView fx:id="songListe" prefHeight="400.0" prefWidth="400.0" GridPane.rowIndex="2">
          <columns>
             <TableColumn fx:id="songName" minWidth="100.0" prefWidth="150.0" text="Name" />
@@ -86,15 +65,7 @@
          <opaqueInsets>
             <Insets left="5.0" right="5.0" />
          </opaqueInsets>
-         <GridPane.margin>
-            <Insets left="5.0" right="5.0" />
-         </GridPane.margin>
       </TableView>
-      <Label text="Songs" GridPane.rowIndex="1">
-         <font>
-            <Font name="System Bold" size="24.0" />
-         </font>
-      </Label>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="334.0" GridPane.rowIndex="3">
          <children>
             <Button mnemonicParsing="false">
@@ -129,46 +100,6 @@
             <Insets top="5.0" />
          </GridPane.margin>
       </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
-         <children>
-            <Button mnemonicParsing="false" onAction="#newPlaylist" text="New Playlist">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-            <Button mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-            <Button mnemonicParsing="false" onAction="#deletePlaylist" text="Delete Playlist">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <Button mnemonicParsing="false" onAction="#newSong" text="New Song">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-            <Button mnemonicParsing="false" onAction="#editSong" text="Edit Song">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-            <Button mnemonicParsing="false" onAction="#addToPlaylist" text="Add to playlist">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
-         <children>
-            <Button mnemonicParsing="false" onAction="#deleteSong" text="Delete From Playlist">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-         </children>
-      </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="4">
          <children>
             <Label text="Now Playing: ">
@@ -185,6 +116,77 @@
          <GridPane.margin>
             <Insets left="5.0" />
          </GridPane.margin>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
+         <children>
+            <Button mnemonicParsing="false" onAction="#newPlaylist" text="New Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#deletePlaylist" text="Delete Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+         </children>
+      </HBox>
+      <Label text="Playlister" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <TableView fx:id="playlister" prefHeight="400.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <columns>
+            <TableColumn fx:id="nameOfPlaylist" minWidth="150.0" prefWidth="150.0" text="Name of Playlist" />
+            <TableColumn fx:id="numberOfSongsOnPlaylist" minWidth="200.0" prefWidth="200.0" text="Number of songs" />
+            <TableColumn fx:id="lengthOfPlaylist" minWidth="75.0" prefWidth="75.0" text="Length" />
+         </columns>
+         <GridPane.margin>
+            <Insets left="5.0" right="5.0" />
+         </GridPane.margin>
+      </TableView>
+      <ProgressBar prefWidth="400.0" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+         <GridPane.margin>
+            <Insets left="5.0" right="5.0" />
+         </GridPane.margin>
+      </ProgressBar>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0" GridPane.columnIndex="2">
+         <children>
+            <TextField fx:id="searchField" alignment="TOP_LEFT" promptText="Search">
+               <font>
+                  <Font size="13.0" />
+               </font></TextField>
+            <Button mnemonicParsing="false" onAction="#search" text="Search">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+         </children>
+      </HBox>
+      <Label text="Songs on Playlist" GridPane.columnIndex="2" GridPane.rowIndex="1">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <TableView fx:id="songsOnPlaylist" prefHeight="400.0" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <columns>
+            <TableColumn fx:id="sOPName" minWidth="150.0" prefWidth="150.0" text="Name" />
+            <TableColumn fx:id="sOPArtist" minWidth="200.0" prefWidth="200.0" text="Artist" />
+            <TableColumn fx:id="sOPLength" minWidth="75.0" prefWidth="75.0" text="Length" />
+         </columns>
+         <GridPane.margin>
+            <Insets left="5.0" right="5.0" />
+         </GridPane.margin>
+      </TableView>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+         <children>
+            <Button mnemonicParsing="false" onAction="#deletePlaylistSong" text="Delete From Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+         </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
          <children>
