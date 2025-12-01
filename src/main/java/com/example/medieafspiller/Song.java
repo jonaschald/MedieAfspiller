@@ -20,6 +20,7 @@ public class Song {
     private String songName = "Unknown";
     private String artistName = "Unknown";
     private long length = 0;
+    private String songLength = "0:00";
     private File songFile;
 
     public String getSongName() {
@@ -68,10 +69,27 @@ public class Song {
                 }
 
                 length = audioFile.getAudioHeader().getTrackLength();
+                setSongLength(length);
             } catch (CannotReadException | TagException | InvalidAudioFrameException | ReadOnlyFileException | IOException e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    private void setSongLength(long length) {
+        long hours = length / 3600;
+        long minutes = length % 3600 / 60;
+        long seconds = length % 3600 % 60;
+
+        String len = "";
+
+        if (hours > 0) {
+            len = (hours < 10 ? "0" + hours : hours) + ":";
+        }
+
+        len += (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+
+        this.songLength = len;
     }
 
     public java.net.URI getSongURI() {

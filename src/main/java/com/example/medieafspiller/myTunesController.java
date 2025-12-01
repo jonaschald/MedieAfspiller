@@ -4,16 +4,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 
 import javax.swing.*;
+import java.util.Optional;
 
 public class myTunesController {
 
@@ -66,18 +65,21 @@ public class myTunesController {
     private final ObservableList<Playlist> playlistData = FXCollections.observableArrayList();
     private final ObservableList<Song> sOPData = FXCollections.observableArrayList();
 
-    private void initialize() {
+    public void initialize() {
         songName.setCellValueFactory(new PropertyValueFactory<Song, String>("songName"));
-        songArtist.setCellValueFactory(new PropertyValueFactory<Song, String>("songArtist"));
+        songArtist.setCellValueFactory(new PropertyValueFactory<Song, String>("artistName"));
         songLength.setCellValueFactory(new PropertyValueFactory<Song, String>("songLength"));
 
-        nameOfPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("nameOfPlaylist"));
+        nameOfPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("name"));
         numberOfSongsOnPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("numberOfSongsOnPlaylist"));
-        lengthOfPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("lengthOgPlaylist"));
+        lengthOfPlaylist.setCellValueFactory(new PropertyValueFactory<Playlist, String>("lengthOfPlaylist"));
 
         sOPName.setCellValueFactory(new PropertyValueFactory<Song, String>("songName"));
-        sOPArtist.setCellValueFactory(new PropertyValueFactory<Song, String>("songArtist"));
+        sOPArtist.setCellValueFactory(new PropertyValueFactory<Song, String>("artistName"));
         sOPLength.setCellValueFactory(new PropertyValueFactory<Song, String>("songLength"));
+
+        playlister.setItems(playlistData);
+        songListe.setItems(songData);
     }
 
     @FXML
@@ -95,13 +97,47 @@ public class myTunesController {
     }
 
     @FXML
-    void delete(ActionEvent event) {
+    void deletePlaylist(ActionEvent event) {
+        if (playlister.getSelectionModel().getSelectedItem() == null) return;
+
+        Playlist p = playlister.getSelectionModel().getSelectedItem();
+        playlistData.remove(p);
+        playlister.refresh();
+    }
+
+    @FXML
+    void deleteSong(ActionEvent event) {
 
     }
 
     @FXML
     void editPlaylist(ActionEvent event) {
+        if (playlister.getSelectionModel().getSelectedItem() == null) return;
+        Playlist playlist = playlister.getSelectionModel().getSelectedItem();
 
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Edit Playlist");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.APPLY);
+
+        Label txt = new Label("Name:");
+        TextField txtf = new TextField(playlist.getName());
+        txtf.setPromptText("Playlist name here...");
+
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.getChildren().addAll(txt, txtf);
+
+        dialog.getDialogPane().setContent(hbox);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.APPLY) {
+            if (txtf.getText().isEmpty()) return;
+
+            playlist.setName(txtf.getText());
+            playlister.refresh();
+        }
     }
 
     @FXML
@@ -116,7 +152,32 @@ public class myTunesController {
 
     @FXML
     void newPlaylist(ActionEvent event) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("New Playlist");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.APPLY);
 
+        Label txt = new Label("Name:");
+        TextField txtf = new TextField();
+        txtf.setPromptText("Playlist name here...");
+
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.getChildren().addAll(txt, txtf);
+
+        dialog.getDialogPane().setContent(hbox);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.APPLY) {
+            if (txtf.getText().isEmpty()) return;
+
+            String name = txtf.getText();
+            Playlist playlist = new Playlist();
+            playlist.setName(name);
+
+            playlistData.add(playlist);
+        }
     }
 
     @FXML

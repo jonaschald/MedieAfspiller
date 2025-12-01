@@ -5,6 +5,9 @@ import java.util.ArrayList;
 public class Playlist {
     private String name;
     private ArrayList<Song> songs;
+    private int numberOfSongsOnPlaylist = 0;
+    private long lengthOfPlaylist = 0;
+    private String playlistLength = "0:00";
 
     public void setName(String name) {
         this.name = name;
@@ -28,5 +31,34 @@ public class Playlist {
 
     public void removeSong(Song song) {
         this.songs.remove(song);
+    }
+
+    public String getLengthOfPlaylist() {
+        long hours = lengthOfPlaylist / 3600;
+        long minutes = lengthOfPlaylist % 3600 / 60;
+        long seconds = lengthOfPlaylist % 3600 % 60;
+
+        String len = "";
+
+        if (hours > 0) {
+            len = (hours < 10 ? "0" + hours : hours) + ":";
+        }
+
+        len += (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        playlistLength = len;
+
+        return playlistLength;
+    }
+
+    public void setLengthOfPlaylist(long lengthOfPlaylist) {
+        this.lengthOfPlaylist = lengthOfPlaylist;
+    }
+
+    public int getNumberOfSongsOnPlaylist() {
+        return numberOfSongsOnPlaylist;
+    }
+
+    public void setNumberOfSongsOnPlaylist(int numberOfSongsOnPlaylist) {
+        this.numberOfSongsOnPlaylist = numberOfSongsOnPlaylist;
     }
 }

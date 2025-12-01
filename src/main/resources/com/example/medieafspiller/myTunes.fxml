@@ -139,7 +139,7 @@
                <font>
                   <Font size="13.0" />
                </font></Button>
-            <Button mnemonicParsing="false" onAction="#delete" text="Delete Playlist">
+            <Button mnemonicParsing="false" onAction="#deletePlaylist" text="Delete Playlist">
                <font>
                   <Font size="13.0" />
                </font></Button>
@@ -163,7 +163,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
          <children>
-            <Button mnemonicParsing="false" onAction="#delete" text="Delete From Playlist">
+            <Button mnemonicParsing="false" onAction="#deleteSong" text="Delete From Playlist">
                <font>
                   <Font size="13.0" />
                </font></Button>
