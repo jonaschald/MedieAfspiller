@@ -3,125 +3,120 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.medieafspiller.myTunesController">
+<GridPane alignment="CENTER" onMouseClicked="#museKlik" prefHeight="600.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.medieafspiller.myTunesController">
+   <columnConstraints>
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="300.0" prefWidth="300.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="300.0" prefWidth="300.0" />
+      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="300.0" prefWidth="300.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="400.0" prefHeight="400.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   </rowConstraints>
    <children>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="400.0">
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0" GridPane.columnIndex="2">
          <children>
-            <Label text="Songs">
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
-            </Label>
-            <TableView fx:id="songListe" prefHeight="400.0" prefWidth="200.0">
-              <columns>
-                <TableColumn fx:id="songName" minWidth="100.0" prefWidth="75.0" text="Name" />
-                <TableColumn fx:id="songArtist" minWidth="200.0" prefWidth="75.0" text="Artist" />
-                  <TableColumn fx:id="songLenght" minWidth="50.0" prefWidth="75.0" text="Lenght" />
-              </columns>
-               <opaqueInsets>
-                  <Insets left="5.0" right="5.0" />
-               </opaqueInsets>
-            </TableView>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button mnemonicParsing="false">
-                     <graphic>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@Back-button.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false">
-                     <graphic>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@Play-Pause.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button mnemonicParsing="false">
-                     <graphic>
-                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@Next-Arrow.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </HBox>
+            <TextField fx:id="searchField" alignment="TOP_LEFT" promptText="Search" />
+            <Button mnemonicParsing="false" onAction="#search" text="Search" />
          </children>
-         <HBox.margin>
+      </HBox>
+      <Label text="Songs on Playlist" GridPane.columnIndex="2" GridPane.rowIndex="1">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <TableView fx:id="songsOnPlaylist" prefHeight="400.0" prefWidth="400.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <columns>
+            <TableColumn fx:id="sOPName" minWidth="150.0" prefWidth="150.0" text="Name" />
+            <TableColumn fx:id="sOPArtist" minWidth="200.0" prefWidth="200.0" text="Artist" />
+            <TableColumn fx:id="sOPLenght" minWidth="75.0" prefWidth="75.0" text="Lenght" />
+         </columns>
+         <GridPane.margin>
             <Insets left="5.0" right="5.0" />
-         </HBox.margin>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="400.0">
+         </GridPane.margin>
+      </TableView>
+      <TableView fx:id="playlister" prefHeight="400.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <columns>
+            <TableColumn fx:id="nameOfPlaylist" minWidth="150.0" prefWidth="150.0" text="Name of Playlist" />
+            <TableColumn fx:id="numberOfSongsOnPlaylist" minWidth="200.0" prefWidth="200.0" text="Number of songs" />
+            <TableColumn fx:id="lenghtOfPlaylist" minWidth="75.0" prefWidth="75.0" text="Lenght" />
+         </columns>
+         <GridPane.margin>
+            <Insets left="5.0" right="5.0" />
+         </GridPane.margin>
+      </TableView>
+      <Label text="Playlister" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <ProgressBar prefWidth="400.0" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+         <GridPane.margin>
+            <Insets left="5.0" right="5.0" />
+         </GridPane.margin>
+      </ProgressBar>
+      <TableView fx:id="songListe" prefHeight="400.0" prefWidth="400.0" GridPane.rowIndex="2">
+         <columns>
+            <TableColumn fx:id="songName" minWidth="100.0" prefWidth="150.0" text="Name" />
+            <TableColumn fx:id="songArtist" minWidth="200.0" prefWidth="200.0" text="Artist" />
+            <TableColumn fx:id="songLenght" minWidth="50.0" prefWidth="75.0" text="Lenght" />
+         </columns>
          <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <children>
-            <Label text="Playlister">
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
-            </Label>
-            <TableView fx:id="playlister" prefHeight="400.0" prefWidth="200.0">
-              <columns>
-                <TableColumn fx:id="nameOfPlaylist" minWidth="150.0" prefWidth="75.0" text="Name of Playlist" />
-                <TableColumn fx:id="numberOfSongsOnPlaylist" minWidth="150.0" prefWidth="75.0" text="Number of songs" />
-                  <TableColumn fx:id="lenghtOfPlaylist" minWidth="50.0" prefWidth="75.0" text="Lenght" />
-              </columns>
-            </TableView>
-         </children>
-         <HBox.margin>
             <Insets left="5.0" right="5.0" />
-         </HBox.margin>
-      </VBox>
-      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="400.0">
-         <opaqueInsets>
-            <Insets />
          </opaqueInsets>
-         <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <TextField promptText="Search" />
-                  <Button mnemonicParsing="false" onAction="#Search" text="Search" />
-               </children>
-            </HBox>
-            <Label text="Songs on Playlist">
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
-            </Label>
-            <TableView prefHeight="400.0" prefWidth="200.0">
-              <columns>
-                <TableColumn fx:id="sOPName" minWidth="100.0" prefWidth="75.0" text="Name" />
-                <TableColumn fx:id="sOPArtist" minWidth="200.0" prefWidth="75.0" text="Artist" />
-                  <TableColumn fx:id="sOPLenght" minWidth="50.0" prefWidth="75.0" text="Lenght" />
-              </columns>
-            </TableView>
-         </children>
-         <HBox.margin>
+         <GridPane.margin>
             <Insets left="5.0" right="5.0" />
-         </HBox.margin>
-      </VBox>
+         </GridPane.margin>
+      </TableView>
+      <Label text="Songs" GridPane.rowIndex="1">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="334.0" GridPane.rowIndex="3">
+         <children>
+            <Button mnemonicParsing="false">
+               <graphic>
+                  <ImageView fx:id="back" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Back-button.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button mnemonicParsing="false">
+               <graphic>
+                  <ImageView fx:id="playPause" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Play-Pause.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button mnemonicParsing="false">
+               <graphic>
+                  <ImageView fx:id="next" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Next-Arrow.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
    </children>
-   <opaqueInsets>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </opaqueInsets>
-</HBox>
+</GridPane>
