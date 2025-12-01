@@ -81,6 +81,20 @@ public class myTunesController {
         playlister.setItems(playlistData);
         songListe.setItems(songData);
         songsOnPlaylist.setItems(sOPData);
+
+        songName.setSortType(TableColumn.SortType.ASCENDING);
+        songArtist.setSortType(TableColumn.SortType.ASCENDING);
+        songListe.getSortOrder().add(songName);
+        songListe.getSortOrder().add(songArtist);
+
+        songListe.sort();
+
+        nameOfPlaylist.setSortType(TableColumn.SortType.ASCENDING);
+        numberOfSongsOnPlaylist.setSortType(TableColumn.SortType.ASCENDING);
+        playlister.getSortOrder().add(nameOfPlaylist);
+        playlister.getSortOrder().add(numberOfSongsOnPlaylist);
+
+        playlister.sort();
     }
 
     @FXML
@@ -178,6 +192,7 @@ public class myTunesController {
             playlist.setName(name);
 
             playlistData.add(playlist);
+            playlister.sort();
         }
     }
 
