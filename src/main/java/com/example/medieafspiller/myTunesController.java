@@ -118,6 +118,7 @@ public class myTunesController {
         Playlist p = playlister.getSelectionModel().getSelectedItem();
         playlistData.remove(p);
         playlister.refresh();
+        playlister.sort();
     }
 
     @FXML
@@ -152,6 +153,7 @@ public class myTunesController {
 
             playlist.setName(txtf.getText());
             playlister.refresh();
+            playlister.sort();
         }
     }
 

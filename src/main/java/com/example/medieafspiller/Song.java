@@ -39,8 +39,21 @@ public class Song {
         this.artistName = artistName;
     }
 
-    public long getLength() {
-        return length;
+    public String getLength() {
+        long hours = length / 3600;
+        long minutes = length % 3600 / 60;
+        long seconds = length % 3600 % 60;
+
+        String len = "";
+
+        if (hours > 0) {
+            len = (hours < 10 ? "0" + hours : hours) + ":";
+        }
+
+        len += (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+
+        this.songLength = len;
+        return this.songLength;
     }
 
     public boolean isValidSong() {
@@ -77,19 +90,7 @@ public class Song {
     }
 
     private void setSongLength(long length) {
-        long hours = length / 3600;
-        long minutes = length % 3600 / 60;
-        long seconds = length % 3600 % 60;
-
-        String len = "";
-
-        if (hours > 0) {
-            len = (hours < 10 ? "0" + hours : hours) + ":";
-        }
-
-        len += (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
-
-        this.songLength = len;
+        this.length = length;
     }
 
     public java.net.URI getSongURI() {
