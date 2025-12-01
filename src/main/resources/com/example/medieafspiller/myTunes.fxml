@@ -35,20 +35,29 @@
             <Button mnemonicParsing="false" onAction="#newSong" text="New Song">
                <font>
                   <Font size="13.0" />
-               </font></Button>
+               </font>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin></Button>
             <Button mnemonicParsing="false" onAction="#editSong" text="Edit Song">
                <font>
                   <Font size="13.0" />
-               </font></Button>
-            <Button mnemonicParsing="false" onAction="#addToPlaylist" text="Add to playlist">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
+               </font>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin></Button>
             <Button mnemonicParsing="false" onAction="#deleteSong" text="Delete Song">
                <font>
                   <Font size="13.0" />
                </font>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
             </Button>
+            <Button mnemonicParsing="false" onAction="#addToPlaylist" text="Add to playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
          </children>
       </HBox>
       <Label text="Songs" GridPane.rowIndex="1">
@@ -65,6 +74,9 @@
          <opaqueInsets>
             <Insets left="5.0" right="5.0" />
          </opaqueInsets>
+         <GridPane.margin>
+            <Insets left="5.0" right="5.0" />
+         </GridPane.margin>
       </TableView>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="334.0" GridPane.rowIndex="3">
          <children>
@@ -122,11 +134,17 @@
             <Button mnemonicParsing="false" onAction="#newPlaylist" text="New Playlist">
                <font>
                   <Font size="13.0" />
-               </font></Button>
+               </font>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin></Button>
             <Button mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist">
                <font>
                   <Font size="13.0" />
-               </font></Button>
+               </font>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin></Button>
             <Button mnemonicParsing="false" onAction="#deletePlaylist" text="Delete Playlist">
                <font>
                   <Font size="13.0" />
