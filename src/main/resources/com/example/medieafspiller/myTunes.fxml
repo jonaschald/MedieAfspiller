@@ -32,8 +32,14 @@
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="300.0" GridPane.columnIndex="2">
          <children>
-            <TextField fx:id="searchField" alignment="TOP_LEFT" promptText="Search" />
-            <Button mnemonicParsing="false" onAction="#search" text="Search" />
+            <TextField fx:id="searchField" alignment="TOP_LEFT" promptText="Search">
+               <font>
+                  <Font size="13.0" />
+               </font></TextField>
+            <Button mnemonicParsing="false" onAction="#search" text="Search">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
          </children>
       </HBox>
       <Label text="Songs on Playlist" GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -125,24 +131,45 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
          <children>
-            <Button mnemonicParsing="false" onAction="#newPlaylist" text="New Playlist" />
-            <Button mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist" />
-            <Button mnemonicParsing="false" onAction="#delete" text="Delete Playlist" />
+            <Button mnemonicParsing="false" onAction="#newPlaylist" text="New Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#editPlaylist" text="Edit Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#delete" text="Delete Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#newSong" text="New Song" />
-            <Button mnemonicParsing="false" onAction="#editSong" text="Edit Song" />
-            <Button mnemonicParsing="false" onAction="#addToPlaylist" text="Add to playlist" />
+            <Button mnemonicParsing="false" onAction="#newSong" text="New Song">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#editSong" text="Edit Song">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button mnemonicParsing="false" onAction="#addToPlaylist" text="Add to playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
          <children>
-            <Button mnemonicParsing="false" onAction="#delete" text="Delete From Playlist" />
+            <Button mnemonicParsing="false" onAction="#delete" text="Delete From Playlist">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
          </children>
       </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="4">
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="4">
          <children>
             <Label text="Now Playing: ">
                <font>
@@ -155,10 +182,13 @@
                </font>
             </Label>
          </children>
+         <GridPane.margin>
+            <Insets left="5.0" />
+         </GridPane.margin>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
          <children>
-            <Label text="Volume">
+            <Label text="Volume:">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
@@ -166,7 +196,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Slider fx:id="volume" blockIncrement="5.0" showTickMarks="true" value="50.0">
+            <Slider fx:id="volume" blockIncrement="5.0" minorTickCount="5" prefWidth="200.0" showTickLabels="true" showTickMarks="true" value="50.0">
                <HBox.margin>
                   <Insets left="5.0" />
                </HBox.margin>
