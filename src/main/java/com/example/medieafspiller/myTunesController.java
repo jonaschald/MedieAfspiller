@@ -80,6 +80,7 @@ public class myTunesController {
 
         playlister.setItems(playlistData);
         songListe.setItems(songData);
+        songsOnPlaylist.setItems(sOPData);
     }
 
     @FXML
