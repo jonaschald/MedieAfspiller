@@ -140,7 +140,9 @@ public class myTunesController {
 
     @FXML
     void deletePlaylistSong(ActionEvent event) {
+        Playlist p = playlister.getSelectionModel().getSelectedItem();
         Song s = songListe.getSelectionModel().getSelectedItem();
+        p.getSongListe().remove(s);
             sOPData.remove(s);
 
             songListe.refresh();
