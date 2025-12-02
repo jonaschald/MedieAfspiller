@@ -22,14 +22,15 @@ import java.util.logging.Logger;
 public class Song {
     private String songName = "";
     private String artistName = "";
+
     private long length = 0;
     private String songLength = "0:00";
+
     private File songFile;
 
     public String getSongName() {
         return songName;
     }
-
     public void setSongName(String songName) {
         this.songName = songName;
     }
@@ -37,12 +38,11 @@ public class Song {
     public String getArtistName() {
         return artistName;
     }
-
     public void setArtistName(String artistName) {
         this.artistName = artistName;
     }
 
-    public String getLength() {
+    public String getLength() { // Lav tid i sekunder om til HH:MM:SS format
         long hours = length / 3600;
         long minutes = length % 3600 / 60;
         long seconds = length % 3600 % 60;
@@ -68,7 +68,7 @@ public class Song {
 
     public boolean isValidSong() {
         return songFile.exists() && songFile.isFile();
-    }
+    } // Sikrer sig i, at sangen eksistere på din computer
 
     public void setSongFile(File songFile) {
         this.songFile = songFile;
@@ -76,7 +76,7 @@ public class Song {
         // Find egenskaber af mp3/wav fil
 
         if (!isValidSong()) return;
-        setSongLength(getAudioLength(this.songFile));
+        setSongLength(getAudioLength(this.songFile)); // Få fat på længden af sangen først
 
         if (this.songFile.getName().toLowerCase().endsWith(".wav")) { // .wav filer har ikke altid metadata og det giver fejl
             setSongName("Unknown Title");
@@ -88,8 +88,8 @@ public class Song {
             AudioFile audioFile = AudioFileIO.read(songFile);
             Tag tag = audioFile.getTag();
 
-            String title = (tag != null) ? tag.getFirst(FieldKey.TITLE) : null;
-            String artist = (tag != null) ? tag.getFirst(FieldKey.ARTIST) : null;
+            String title = (tag != null) ? tag.getFirst(FieldKey.TITLE) : null; // Find titel af sangen i metadata
+            String artist = (tag != null) ? tag.getFirst(FieldKey.ARTIST) : null; // Find kunstneren af sangen i metadata
 
             setSongName(title != null && !title.isEmpty() ? title : "Unknown Title");
             setArtistName(artist != null && !artist.isEmpty() ? artist : "Unknown Artist");
@@ -102,7 +102,7 @@ public class Song {
     }
 
     private long getAudioLength(File file) {
-        if (file.getName().toLowerCase().endsWith(".wav")) {
+        if (file.getName().toLowerCase().endsWith(".wav")) { // .wav filer er ikke helt pålidelige med metadata
             return getAudioLengthFromStream(file);
         }
 
@@ -121,6 +121,7 @@ public class Song {
             stream = AudioSystem.getAudioInputStream(file);
             AudioFormat format = stream.getFormat();
             long frames = stream.getFrameLength();
+
             return frames / (long) format.getFrameRate();
         } catch (Exception e) {
             return 0;

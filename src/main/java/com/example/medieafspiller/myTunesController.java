@@ -213,6 +213,7 @@ public class myTunesController {
 
     }
 
+    // Skaber en HBox med noget tekst ved siden af et tekstfelt
     private Pair<TextField, HBox> newTextField(String labelText, String promptText, boolean editable) {
         HBox hbox = new HBox();
         hbox.setSpacing(10);
@@ -225,12 +226,14 @@ public class myTunesController {
 
         hbox.getChildren().addAll(label, textField);
 
-        return new Pair<>(textField, hbox);
+        return new Pair<>(textField, hbox); // Sikrer sig at tekstfeltet og HBox ikke skifter rundt, når man har brug for dem
     }
 
+    // Skab nyt vindue til at tilføje / ændre sange
     private void newSongDialog(String header, Song song, Consumer<Song> onApply) {
-        if (song == null) song = new Song();
+        if (song == null) song = new Song(); // Hvis vi ikke er i gang med at ændre en sang vi har på playlisten
 
+        // Skab ny dialog vindue
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle(header);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.APPLY);
@@ -245,11 +248,15 @@ public class myTunesController {
         Pair<TextField, HBox> artistPair = newTextField("Artist:", "Artist here...", true);
         Pair<TextField, HBox> timePair = newTextField("Time:", "", false);
         Pair<TextField, HBox> filePair = newTextField("File:", "File here...", false);
-        
+
+        // Få fat på tekstfelterne, der ændres
+
         TextField titleField = titlePair.getKey();
         TextField artistField = artistPair.getKey();
         TextField timeField = timePair.getKey();
         TextField filePathField = filePair.getKey();
+
+        // Hvis vi har valgt en sang, der allerede eksistere, så skifter vi teksten på sangens egenskaber
 
         titleField.setText(!song.getSongName().isEmpty() ? song.getSongName() : "");
         artistField.setText(!song.getArtistName().isEmpty() ? song.getArtistName() : "");
@@ -266,42 +273,38 @@ public class myTunesController {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Choose sound file...");
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Sound files", "*.mp3", "*.wav")
-            );
+                    new FileChooser.ExtensionFilter("Sound files", "*.mp3", "*.wav", "*.ogg")
+            ); // Vi må kun vælge .mp3, .wav, og .ogg filer.
 
             File selectedFile = fileChooser.showOpenDialog(null);
             if (selectedFile != null) {
                 filePathField.setText(selectedFile.getAbsolutePath());
                 finalSong.setSongFile(selectedFile);
 
-                if (titleField.getText() == null || titleField.getText().isBlank() || titleField.getText().isEmpty())
-                    titleField.setText(finalSong.getSongName());
-                else
-                    finalSong.setSongName(titleField.getText());
-
-                if (artistField.getText() == null || artistField.getText().isBlank() || artistField.getText().isEmpty())
-                    artistField.setText(finalSong.getArtistName());
-                else
-                    finalSong.setArtistName(artistField.getText());
-
+                // Skift egenskaber
+                titleField.setText(finalSong.getSongName());
+                artistField.setText(finalSong.getArtistName());
                 timeField.setText(finalSong.getLength());
             }
         });
 
+        // Fremvis vinduet
         vbox.getChildren().addAll(titlePair.getValue(), artistPair.getValue(), timePair.getValue(), filePair.getValue());
         dialog.getDialogPane().setContent(vbox);
 
         Optional<ButtonType> result = dialog.showAndWait();
 
         if (result.isPresent() && result.get() == ButtonType.APPLY) {
-            song.setSongName(titleField.getText());
+            song.setSongName(titleField.getText()); // Skift egenskaber
             song.setArtistName(artistField.getText());
 
             onApply.accept(song);
         }
     }
 
+    // Skab nyt vindue til at tilføje / ændre playlister
     private void newPlaylistDialog(String header, String playlistName, Consumer<TextField> onApply) {
+        // Skab dialog vinduet
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle(header);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.APPLY);
@@ -312,7 +315,7 @@ public class myTunesController {
 
         dialog.getDialogPane().setContent(editPair.getValue());
 
-        Platform.runLater(txtf::requestFocus);
+        Platform.runLater(txtf::requestFocus); // Spørg efter focus på tekstfeltet
         txtf.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 dialog.setResult(ButtonType.APPLY);
@@ -321,7 +324,7 @@ public class myTunesController {
                 dialog.setResult(ButtonType.CANCEL);
                 dialog.close();
             }
-        });
+        }); // For hurtigere ændring hvis der trykkes på ENTER imens du har fokus på tekstfeltet
 
         Optional<ButtonType> result = dialog.showAndWait();
 
