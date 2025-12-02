@@ -1,6 +1,7 @@
 package com.example.medieafspiller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Playlist {
     private String name;
@@ -8,6 +9,7 @@ public class Playlist {
     private int numberOfSongsOnPlaylist = 0;
     private long lengthOfPlaylist = 0;
     private String playlistLength = "0:00";
+
 
     public void setName(String name) {
         this.name = name;
@@ -61,4 +63,6 @@ public class Playlist {
     public void setNumberOfSongsOnPlaylist(int numberOfSongsOnPlaylist) {
         this.numberOfSongsOnPlaylist = numberOfSongsOnPlaylist;
     }
+
+    public List<Song> getSongsOnPlaylist(){return songs;}
 }

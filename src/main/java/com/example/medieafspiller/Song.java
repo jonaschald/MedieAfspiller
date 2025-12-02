@@ -28,6 +28,10 @@ public class Song {
 
     private File songFile;
 
+
+    @Override
+    public String toString() {return songName + " " +  artistName + " " +  songLength;}
+
     public String getSongName() {
         return songName;
     }
@@ -144,4 +148,5 @@ public class Song {
     public String getFilePath() {
         return songFile != null ? songFile.getAbsolutePath() : "";
     }
+
 }
