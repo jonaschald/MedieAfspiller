@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -28,9 +29,6 @@ public class Song {
 
     private File songFile;
 
-
-    @Override
-    public String toString() {return songName + " " +  artistName + " " +  songLength;}
 
     public String getSongName() {
         return songName;
@@ -148,5 +146,4 @@ public class Song {
     public String getFilePath() {
         return songFile != null ? songFile.getAbsolutePath() : "";
     }
-
 }

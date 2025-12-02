@@ -5,11 +5,10 @@ import java.util.List;
 
 public class Playlist {
     private String name;
-    private ArrayList<Song> songs;
+    private List<Song> songListe = new ArrayList<Song>();
     private int numberOfSongsOnPlaylist = 0;
     private long lengthOfPlaylist = 0;
     private String playlistLength = "0:00";
-
 
     public void setName(String name) {
         this.name = name;
@@ -19,20 +18,16 @@ public class Playlist {
         return name;
     }
 
-    public void setSongs(ArrayList<Song> songs) {
-        this.songs = songs;
-    }
-
-    public ArrayList<Song> getSongs() {
-        return songs;
+    public List<Song> getSongListe() {
+        return songListe;
     }
 
     public void addSong(Song song) {
-        this.songs.add(song);
+       songListe.add(song);
     }
 
     public void removeSong(Song song) {
-        this.songs.remove(song);
+        this.songListe.remove(song);
     }
 
     public String getLengthOfPlaylist() {
@@ -64,5 +59,5 @@ public class Playlist {
         this.numberOfSongsOnPlaylist = numberOfSongsOnPlaylist;
     }
 
-    public List<Song> getSongsOnPlaylist(){return songs;}
+    public List<Song> getSongsOnPlaylist(){return songListe;}
 }

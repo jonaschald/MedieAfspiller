@@ -123,6 +123,7 @@ public class myTunesController {
         Song s = songListe.getSelectionModel().getSelectedItem();
         Playlist p = playlister.getSelectionModel().getSelectedItem();
         p.addSong(s);
+        songData.setAll(p.getSongListe());
 
         songsOnPlaylist.refresh();
     }
@@ -139,8 +140,10 @@ public class myTunesController {
 
     @FXML
     void deletePlaylistSong(ActionEvent event) {
-        Song s = songsOnPlaylist.getSelectionModel().getSelectedItem();
+        Song s = songListe.getSelectionModel().getSelectedItem();
             sOPData.remove(s);
+
+            songListe.refresh();
     }
 
     @FXML
@@ -202,7 +205,11 @@ public class myTunesController {
 
     @FXML
     void museKlik(MouseEvent event) {
-
+        if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 1)
+        {
+            Playlist p = playlister.getSelectionModel().getSelectedItem();
+            sOPData.setAll(p.getSongListe());
+        }
     }
 
     @FXML
