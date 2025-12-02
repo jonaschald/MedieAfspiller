@@ -118,6 +118,7 @@ public class myTunesController {
     private Slider volume;
 
     @FXML
+    //tilføj sang til playlistre
     void addToPlaylist(ActionEvent event) {
         Song s = songListe.getSelectionModel().getSelectedItem();
         Playlist p = playlister.getSelectionModel().getSelectedItem();
@@ -138,6 +139,7 @@ public class myTunesController {
     }
 
     @FXML
+    //fjerner sang fra playliste
     void deletePlaylistSong(ActionEvent event) {
         Playlist p = playlister.getSelectionModel().getSelectedItem();
         Song s = songListe.getSelectionModel().getSelectedItem();
@@ -205,6 +207,7 @@ public class myTunesController {
     }
 
     @FXML
+    //tilføjer museklik event
     void museKlik(MouseEvent event) {
         if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 1)
         {
