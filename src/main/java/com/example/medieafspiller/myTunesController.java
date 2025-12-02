@@ -12,11 +12,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.util.Pair;
 
-import javax.swing.*;
-import java.security.Key;
+import java.io.File;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class myTunesController {
 
@@ -70,6 +75,8 @@ public class myTunesController {
     private final ObservableList<Song> sOPData = FXCollections.observableArrayList();
 
     public void initialize() {
+        Logger.getLogger("org.jaudiotagger").setLevel(Level.OFF);
+
         songName.setCellValueFactory(new PropertyValueFactory<Song, String>("songName"));
         songArtist.setCellValueFactory(new PropertyValueFactory<Song, String>("artistName"));
         songLength.setCellValueFactory(new PropertyValueFactory<Song, String>("songLength"));
@@ -132,7 +139,14 @@ public class myTunesController {
 
     @FXML
     void deleteSong(ActionEvent event) {
+        Song selectedSong = songListe.getSelectionModel().getSelectedItem();
 
+        if (selectedSong != null) {
+            songData.remove(selectedSong);
+
+            songListe.refresh();
+            songListe.sort();
+        }
     }
 
     @FXML
@@ -165,7 +179,19 @@ public class myTunesController {
 
     @FXML
     void editSong(ActionEvent event) {
+        Song selectedSong = songListe.getSelectionModel().getSelectedItem();
 
+        if (selectedSong != null) {
+            newSongDialog("Edit Song", selectedSong, song -> {
+                if (!song.isValidSong()) {
+                    songData.remove(selectedSong);
+                    return;
+                }
+
+                songListe.refresh();
+                songListe.sort();
+            });
+        }
     }
 
     @FXML
@@ -175,7 +201,11 @@ public class myTunesController {
 
     @FXML
     void newSong(ActionEvent event) {
+        newSongDialog("New Song", null, song -> {
+            if (!song.isValidSong()) return; // filen eksistere ikke
 
+            songData.add(song);
+        });
     }
 
     @FXML
@@ -183,21 +213,104 @@ public class myTunesController {
 
     }
 
+    private Pair<TextField, HBox> newTextField(String labelText, String promptText, boolean editable) {
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        hbox.setAlignment(Pos.CENTER);
+
+        Label label = new Label(labelText);
+        TextField textField = new TextField();
+        textField.setPromptText(promptText);
+        textField.setEditable(editable);
+
+        hbox.getChildren().addAll(label, textField);
+
+        return new Pair<>(textField, hbox);
+    }
+
+    private void newSongDialog(String header, Song song, Consumer<Song> onApply) {
+        if (song == null) song = new Song();
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle(header);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.APPLY);
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(10);
+        vbox.setAlignment(Pos.CENTER);
+
+        // Skab tekst felter til sangens egenskaber
+
+        Pair<TextField, HBox> titlePair = newTextField("Title:", "Title here...", true);
+        Pair<TextField, HBox> artistPair = newTextField("Artist:", "Artist here...", true);
+        Pair<TextField, HBox> timePair = newTextField("Time:", "", false);
+        Pair<TextField, HBox> filePair = newTextField("File:", "File here...", false);
+        
+        TextField titleField = titlePair.getKey();
+        TextField artistField = artistPair.getKey();
+        TextField timeField = timePair.getKey();
+        TextField filePathField = filePair.getKey();
+
+        titleField.setText(!song.getSongName().isEmpty() ? song.getSongName() : "");
+        artistField.setText(!song.getArtistName().isEmpty() ? song.getArtistName() : "");
+        timeField.setText(song.getLength());
+        filePathField.setText(!song.getFilePath().isEmpty() ? song.getFilePath() : "");
+
+        // Vælg lydfil
+
+        Button chooseFile = new Button("Choose...");
+        filePair.getValue().getChildren().add(chooseFile);
+
+        Song finalSong = song;
+        chooseFile.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Choose sound file...");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Sound files", "*.mp3", "*.wav")
+            );
+
+            File selectedFile = fileChooser.showOpenDialog(null);
+            if (selectedFile != null) {
+                filePathField.setText(selectedFile.getAbsolutePath());
+                finalSong.setSongFile(selectedFile);
+
+                if (titleField.getText() == null || titleField.getText().isBlank() || titleField.getText().isEmpty())
+                    titleField.setText(finalSong.getSongName());
+                else
+                    finalSong.setSongName(titleField.getText());
+
+                if (artistField.getText() == null || artistField.getText().isBlank() || artistField.getText().isEmpty())
+                    artistField.setText(finalSong.getArtistName());
+                else
+                    finalSong.setArtistName(artistField.getText());
+
+                timeField.setText(finalSong.getLength());
+            }
+        });
+
+        vbox.getChildren().addAll(titlePair.getValue(), artistPair.getValue(), timePair.getValue(), filePair.getValue());
+        dialog.getDialogPane().setContent(vbox);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.APPLY) {
+            song.setSongName(titleField.getText());
+            song.setArtistName(artistField.getText());
+
+            onApply.accept(song);
+        }
+    }
+
     private void newPlaylistDialog(String header, String playlistName, Consumer<TextField> onApply) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle(header);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.APPLY);
 
-        Label txt = new Label("Name:");
-        TextField txtf = new TextField(!playlistName.isEmpty() ? playlistName : null);
-        txtf.setPromptText("Playlist name here...");
+        Pair<TextField, HBox> editPair = newTextField("Name:", "Playlist name here...", true);
+        TextField txtf = editPair.getKey();
+        txtf.setText(playlistName);
 
-        HBox hbox = new HBox();
-        hbox.setSpacing(10);
-        hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().addAll(txt, txtf);
-
-        dialog.getDialogPane().setContent(hbox);
+        dialog.getDialogPane().setContent(editPair.getValue());
 
         Platform.runLater(txtf::requestFocus);
         txtf.setOnKeyPressed(e -> {

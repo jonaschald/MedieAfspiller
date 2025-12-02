@@ -11,14 +11,17 @@ import org.jaudiotagger.tag.TagException;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.util.logging.Logger;
 
 
 public class Song {
-    private String songName = "Unknown";
-    private String artistName = "Unknown";
+    private String songName = "";
+    private String artistName = "";
     private long length = 0;
     private String songLength = "0:00";
     private File songFile;
@@ -48,12 +51,19 @@ public class Song {
 
         if (hours > 0) {
             len = (hours < 10 ? "0" + hours : hours) + ":";
+            len += (minutes < 10 ? "0" + minutes : minutes) + ":";
+        } else {
+            len += minutes + ":";
         }
 
-        len += (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        len += (seconds < 10 ? "0" + seconds : seconds);
 
         this.songLength = len;
-        return this.songLength;
+        return len;
+    }
+
+    public String getSongLength() {
+        return getLength();
     }
 
     public boolean isValidSong() {
@@ -65,27 +75,60 @@ public class Song {
 
         // Find egenskaber af mp3/wav fil
 
-        if (isValidSong()) {
-            try {
-                AudioFile audioFile = AudioFileIO.read(songFile);
-                Tag tag = audioFile.getTag();
+        if (!isValidSong()) return;
+        setSongLength(getAudioLength(this.songFile));
 
-                if (tag != null) {
-                    String title = tag.getFirst(FieldKey.TITLE);
-                    String artist = tag.getFirst(FieldKey.ARTIST);
+        if (this.songFile.getName().toLowerCase().endsWith(".wav")) { // .wav filer har ikke altid metadata og det giver fejl
+            setSongName("Unknown Title");
+            setArtistName("Unknown Artist");
+            return;
+        }
 
-                    setSongName(title != null && !title.isEmpty() ? title : "Unknown Title");
-                    setArtistName(artist != null && !artist.isEmpty() ? artist : "Unknown Artist");
-                } else {
-                    setSongName("Unknown Title");
-                    setArtistName("Unknown Artist");
-                }
+        try {
+            AudioFile audioFile = AudioFileIO.read(songFile);
+            Tag tag = audioFile.getTag();
 
-                length = audioFile.getAudioHeader().getTrackLength();
-                setSongLength(length);
-            } catch (CannotReadException | TagException | InvalidAudioFrameException | ReadOnlyFileException | IOException e) {
-                System.out.println(e.getMessage());
-            }
+            String title = (tag != null) ? tag.getFirst(FieldKey.TITLE) : null;
+            String artist = (tag != null) ? tag.getFirst(FieldKey.ARTIST) : null;
+
+            setSongName(title != null && !title.isEmpty() ? title : "Unknown Title");
+            setArtistName(artist != null && !artist.isEmpty() ? artist : "Unknown Artist");
+        } catch (Exception e) {
+            System.out.println("Couldn't read metadata: " + e.getMessage());
+
+            setSongName("Unknown Title");
+            setArtistName("Unknown Artist");
+        }
+    }
+
+    private long getAudioLength(File file) {
+        if (file.getName().toLowerCase().endsWith(".wav")) {
+            return getAudioLengthFromStream(file);
+        }
+
+        try {
+            AudioFile audioFile = AudioFileIO.read(file);
+            return audioFile.getAudioHeader().getTrackLength();
+        } catch (Exception e) {
+            return getAudioLengthFromStream(file);
+        }
+    }
+
+    private long getAudioLengthFromStream(File file) {
+        AudioInputStream stream = null;
+
+        try {
+            stream = AudioSystem.getAudioInputStream(file);
+            AudioFormat format = stream.getFormat();
+            long frames = stream.getFrameLength();
+            return frames / (long) format.getFrameRate();
+        } catch (Exception e) {
+            return 0;
+        } finally {
+            if (stream != null)
+                try {
+                    stream.close();
+                } catch (IOException ignored) {}
         }
     }
 
@@ -93,7 +136,11 @@ public class Song {
         this.length = length;
     }
 
-    public java.net.URI getSongURI() {
+    public URI getSongURI() {
         return songFile.toURI();
+    }
+
+    public String getFilePath() {
+        return songFile != null ? songFile.getAbsolutePath() : "";
     }
 }
