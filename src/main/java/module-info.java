@@ -5,6 +5,7 @@ module com.example.medieafspiller {
     requires javafx.media;
     requires jaudiotagger;
     requires java.logging;
+    requires java.sql;
 
 
     opens com.example.medieafspiller to javafx.fxml;

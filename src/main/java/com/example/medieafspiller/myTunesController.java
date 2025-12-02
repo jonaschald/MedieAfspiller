@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -118,7 +119,12 @@ public class myTunesController {
 
     @FXML
     void addToPlaylist(ActionEvent event) {
+        Song s = songListe.getSelectionModel().getSelectedItem();
+        Playlist p = playlister.getSelectionModel().getSelectedItem();
+        p.addSong(s);
+        songData.setAll(p.getSongListe());
 
+        songsOnPlaylist.refresh();
     }
 
     @FXML
@@ -133,7 +139,12 @@ public class myTunesController {
 
     @FXML
     void deletePlaylistSong(ActionEvent event) {
+        Playlist p = playlister.getSelectionModel().getSelectedItem();
+        Song s = songListe.getSelectionModel().getSelectedItem();
+        p.getSongListe().remove(s);
+            sOPData.remove(s);
 
+            songListe.refresh();
     }
 
     @FXML
@@ -195,7 +206,11 @@ public class myTunesController {
 
     @FXML
     void museKlik(MouseEvent event) {
-
+        if(event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 1)
+        {
+            Playlist p = playlister.getSelectionModel().getSelectedItem();
+            sOPData.setAll(p.getSongListe());
+        }
     }
 
     @FXML
