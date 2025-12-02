@@ -18,7 +18,6 @@ import javafx.util.Pair;
 
 import java.io.File;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
