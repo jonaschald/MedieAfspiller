@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Playlist {
     private String name;
-    private ArrayList<Song> songs;
+    private ArrayList<Song> songs = new ArrayList<>();
     private int numberOfSongsOnPlaylist = 0;
     private long lengthOfPlaylist = 0;
     private String playlistLength = "0:00";

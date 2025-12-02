@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -105,6 +107,8 @@ public class myTunesController {
         playlister.getSortOrder().add(numberOfSongsOnPlaylist);
 
         playlister.sort();
+
+        songsOnPlaylist.setItems(sOPData);
     }
 
     @FXML
@@ -118,7 +122,18 @@ public class myTunesController {
 
     @FXML
     void addToPlaylist(ActionEvent event) {
+        Song song = songListe.getSelectionModel().getSelectedItem();
+        Playlist playlist = playlister.getSelectionModel().getSelectedItem();
 
+        if (song != null && playlist != null) {
+            if (!playlist.getSongs().contains(song)) {
+                playlist.getSongs().add(song);
+                sOPData.setAll(playlist.getSongs());
+
+                songsOnPlaylist.refresh();
+                songsOnPlaylist.sort();
+            }
+        }
     }
 
     @FXML
@@ -126,14 +141,31 @@ public class myTunesController {
         if (playlister.getSelectionModel().getSelectedItem() == null) return;
 
         Playlist p = playlister.getSelectionModel().getSelectedItem();
+
+        if (sOPData.equals(p.getSongs())) {
+            sOPData.clear();
+
+            songsOnPlaylist.refresh();
+            songsOnPlaylist.sort();
+        }
+
         playlistData.remove(p);
+
         playlister.refresh();
         playlister.sort();
     }
 
     @FXML
     void deletePlaylistSong(ActionEvent event) {
+        Song song = songsOnPlaylist.getSelectionModel().getSelectedItem();
+        Playlist playlist = playlister.getSelectionModel().getSelectedItem();
 
+        if (song != null && playlist != null) {
+            playlist.getSongs().remove(song);
+
+            songsOnPlaylist.refresh();
+            songsOnPlaylist.sort();
+        }
     }
 
     @FXML
@@ -157,6 +189,7 @@ public class myTunesController {
             if (txtf.getText().isEmpty()) return;
 
             playlist.setName(txtf.getText());
+
             playlister.refresh();
             playlister.sort();
         });
@@ -195,13 +228,23 @@ public class myTunesController {
 
     @FXML
     void museKlik(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            Playlist playlist = playlister.getSelectionModel().getSelectedItem();
 
+            if (playlist != null) {
+                sOPData.setAll(playlist.getSongs());
+            }
+        }
     }
 
     @FXML
     void newSong(ActionEvent event) {
         newSongDialog("New Song", null, song -> {
             if (!song.isValidSong()) return; // filen eksistere ikke
+
+            if (songData.stream().anyMatch(song1 -> song1.getSongURI().equals(song.getSongURI()))) {
+                return; // Vi behøver ikke to af den samme sang
+            }
 
             songData.add(song);
         });
