@@ -80,27 +80,27 @@
       </TableView>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="334.0" GridPane.rowIndex="3">
          <children>
-            <Button mnemonicParsing="false">
+            <Button mnemonicParsing="false" onMouseClicked="#previous">
                <graphic>
-                  <ImageView fx:id="back" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Back-button.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <Button mnemonicParsing="false">
+            <Button mnemonicParsing="false" onMouseClicked="#playPause">
                <graphic>
-                  <ImageView fx:id="playPause" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Play-Pause.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <Button mnemonicParsing="false">
+            <Button mnemonicParsing="false" onMouseClicked="#next">
                <graphic>
-                  <ImageView fx:id="next" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@Next-Arrow.png" />
                      </image>

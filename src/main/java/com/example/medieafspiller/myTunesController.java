@@ -1,6 +1,7 @@
 package com.example.medieafspiller;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,6 +21,7 @@ import javafx.util.Pair;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,6 +77,19 @@ public class myTunesController {
     private final ObservableList<Playlist> playlistData = FXCollections.observableArrayList();
     private final ObservableList<Song> sOPData = FXCollections.observableArrayList();
 
+    private final MusicPlayer musicPlayer = new MusicPlayer();
+    private int index = 0;
+
+    // For at forklare hvorfor nogle filer ikke virker
+    private final String nySangFejl = String.format(
+            "Sangen er ikke valid. Det kan være fordi:%n" +
+                    "%4sFilen kan ikke findes%n" +
+                    "%4sFilen kan ikke læses%n" +
+                    "%4sFilen er ikke et understøttet medie%n" +
+                    "%4sFilen har ikke en sample størrelse på 16 eller en sample rate på 44.1 kHz eller 48 kHz",
+            "", "", "", ""
+    );
+
     public void initialize() {
         Logger.getLogger("org.jaudiotagger").setLevel(Level.OFF);
 
@@ -109,6 +124,38 @@ public class myTunesController {
         playlister.sort();
 
         songsOnPlaylist.setItems(sOPData);
+
+        musicPlayer.setOnEndOfMedia(this::playNextSong);
+    }
+
+    private void playNextSong() {
+        if (sOPData.size() - 1 == index) index = -1;
+
+        index++;
+        songsOnPlaylist.getSelectionModel().select(index);
+
+        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem());
+    }
+
+    private void playPreviousSong() {
+        if (index == 0) index = sOPData.size();
+
+        index--;
+        songsOnPlaylist.getSelectionModel().select(index);
+
+        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem());
+    }
+
+    private void playSong(MusicPlayer mp, Song song) {
+        if (mp.isPlaying() && mp.getCurrentSong() == song) {
+            mp.pause();
+        } else if (mp.isPlaying() && mp.getCurrentSong() != song) {
+            mp.play(song);
+        } else {
+            mp.play(song);
+        }
+
+        nowPlaying.setText(mp.getCurrentSong().getArtistName() + " - " + mp.getCurrentSong().getSongName());
     }
 
     @FXML
@@ -121,15 +168,38 @@ public class myTunesController {
     private Slider volume;
 
     @FXML
+    void next(MouseEvent event) {
+        playNextSong();
+    }
+
+    @FXML
+    void playPause(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) {
+            Song song = songsOnPlaylist.getSelectionModel().getSelectedItem();
+
+            if (song == null) return;
+
+            index = songsOnPlaylist.getSelectionModel().getSelectedIndex();
+            playSong(musicPlayer, song);
+        }
+    }
+
+    @FXML
+    void previous(MouseEvent event) {
+        playPreviousSong();
+    }
+
+    @FXML
     void addToPlaylist(ActionEvent event) {
         Song song = songListe.getSelectionModel().getSelectedItem();
         Playlist playlist = playlister.getSelectionModel().getSelectedItem();
 
         if (song != null && playlist != null) {
             if (!playlist.getSongs().contains(song)) {
-                playlist.getSongs().add(song);
+                playlist.addSong(song);
                 sOPData.setAll(playlist.getSongs());
 
+                playlister.refresh();
                 songsOnPlaylist.refresh();
                 songsOnPlaylist.sort();
             }
@@ -161,8 +231,9 @@ public class myTunesController {
         Playlist playlist = playlister.getSelectionModel().getSelectedItem();
 
         if (song != null && playlist != null) {
-            playlist.getSongs().remove(song);
+            playlist.removeSong(song);
 
+            playlister.refresh();
             songsOnPlaylist.refresh();
             songsOnPlaylist.sort();
         }
@@ -244,7 +315,9 @@ public class myTunesController {
     @FXML
     void newSong(ActionEvent event) {
         newSongDialog("New Song", null, song -> {
-            if (!song.isValidSong()) return; // filen eksistere ikke
+            if (!song.isValidSong()) { // filen eksistere ikke
+                return;
+            }
 
             if (songData.stream().anyMatch(song1 -> song1.getSongURI().equals(song.getSongURI()))) {
                 return; // Vi behøver ikke to af den samme sang
@@ -268,6 +341,18 @@ public class myTunesController {
                 .toList();
 
         songsOnPlaylist.setItems(FXCollections.observableList(result));
+    }
+
+    private void errorWindow(String message) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.setTitle("Der skete en fejl...");
+
+        Label label = new Label(message);
+        label.setWrapText(true);
+
+        dialog.getDialogPane().setContent(label);
+        dialog.show();
     }
 
     // Skaber en HBox med noget tekst ved siden af et tekstfelt
@@ -337,6 +422,10 @@ public class myTunesController {
             if (selectedFile != null) {
                 filePathField.setText(selectedFile.getAbsolutePath());
                 finalSong.setSongFile(selectedFile);
+
+                if (!finalSong.isValidSong()) {
+                    errorWindow(nySangFejl);
+                }
 
                 // Skift egenskaber
                 titleField.setText(finalSong.getSongName());

@@ -27,13 +27,17 @@ public class Playlist {
 
     public void addSong(Song song) {
         this.songs.add(song);
+        this.numberOfSongsOnPlaylist++;
+        this.setLengthOfPlaylist(lengthOfPlaylist + song.getRawSongLength());
     }
 
     public void removeSong(Song song) {
         this.songs.remove(song);
+        this.numberOfSongsOnPlaylist--;
+        this.setLengthOfPlaylist(lengthOfPlaylist - song.getRawSongLength());
     }
 
-    public String getLengthOfPlaylist() {
+    public String getLengthOfPlaylist() { // Lav tid i sekunder om til HH:MM:SS format
         long hours = lengthOfPlaylist / 3600;
         long minutes = lengthOfPlaylist % 3600 / 60;
         long seconds = lengthOfPlaylist % 3600 % 60;
@@ -42,16 +46,20 @@ public class Playlist {
 
         if (hours > 0) {
             len = (hours < 10 ? "0" + hours : hours) + ":";
+            len += (minutes < 10 ? "0" + minutes : minutes) + ":";
+        } else {
+            len += minutes + ":";
         }
 
-        len += (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
-        playlistLength = len;
+        len += (seconds < 10 ? "0" + seconds : seconds);
 
-        return playlistLength;
+        this.playlistLength = len;
+        return len;
     }
 
     public void setLengthOfPlaylist(long lengthOfPlaylist) {
         this.lengthOfPlaylist = lengthOfPlaylist;
+        this.playlistLength = getLengthOfPlaylist();
     }
 
     public int getNumberOfSongsOnPlaylist() {

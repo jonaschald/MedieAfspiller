@@ -1,17 +1,23 @@
 package com.example.medieafspiller;
 
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+
+import java.sql.SQLOutput;
+import java.util.function.Consumer;
 
 public class MusicPlayer {
     private MediaPlayer mediaPlayer;
     private Song currentSong;
 
+    private Runnable onEndOfMedia = null;
+
     public void play(Song song) {
         if (song == null || !song.isValidSong()) return;
 
-        if (song.equals(currentSong) && mediaPlayer != null) {
+        if (currentSong != null && song.getSongURI().equals(currentSong.getSongURI()) && mediaPlayer != null) {
             mediaPlayer.play();
             return;
         }
@@ -26,6 +32,10 @@ public class MusicPlayer {
         mediaPlayer.setOnEndOfMedia(() -> {
             mediaPlayer.seek(Duration.ZERO);
             mediaPlayer.stop();
+
+            if (onEndOfMedia != null) {
+                onEndOfMedia.run();
+            }
         });
 
         mediaPlayer.setOnError(() -> {
@@ -66,8 +76,16 @@ public class MusicPlayer {
         return mediaPlayer != null ? mediaPlayer.getCurrentTime() : Duration.ZERO;
     }
 
+    public Song getCurrentSong() {
+        return currentSong;
+    }
+
     public Duration getTotalDuration() {
         return mediaPlayer != null ? mediaPlayer.getTotalDuration() : Duration.ZERO;
+    }
+
+    public void setOnEndOfMedia(Runnable runnable) {
+        onEndOfMedia = runnable;
     }
 
     public boolean isPlaying() {

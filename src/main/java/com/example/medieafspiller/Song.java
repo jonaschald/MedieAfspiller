@@ -62,8 +62,30 @@ public class Song {
         return getLength();
     }
 
+    public long getRawSongLength() {
+        return length;
+    }
+
+    private boolean isJavaFxCompatible(File file) {
+        try (AudioInputStream stream = AudioSystem.getAudioInputStream(file)) {
+            AudioFormat format = stream.getFormat();
+
+            return format.getEncoding() == AudioFormat.Encoding.PCM_SIGNED
+                    && format.getSampleSizeInBits() == 16
+                    && ((int) format.getSampleRate() == 44100 || (int) format.getSampleRate() == 48000);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public boolean isValidSong() {
-        return songFile.exists() && songFile.isFile();
+        boolean valid = songFile.exists() && songFile.isFile();
+
+        if (valid && songFile.getName().endsWith(".wav")) {
+            valid = isJavaFxCompatible(songFile);
+        }
+
+        return valid;
     } // Sikrer sig i, at sangen eksistere på din computer
 
     public void setSongFile(File songFile) {
