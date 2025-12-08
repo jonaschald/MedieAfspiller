@@ -10,9 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -76,6 +74,15 @@ public class myTunesController {
     @FXML
     private ProgressBar progressBar;
 
+    @FXML
+    private TableColumn<Song, String> songName;
+
+    @FXML
+    private TableView<Song> songsOnPlaylist;
+
+    @FXML
+    private Slider volume;
+
     private final ObservableList<Song> songData = FXCollections.observableArrayList();
     private final ObservableList<Playlist> playlistData = FXCollections.observableArrayList();
     private final ObservableList<Song> sOPData = FXCollections.observableArrayList();
@@ -128,6 +135,79 @@ public class myTunesController {
         playlister.sort();
 
         songsOnPlaylist.setItems(sOPData);
+
+        songsOnPlaylist.setRowFactory(tview -> {
+            TableRow<Song> row = new TableRow<>();
+
+            row.setOnDragDetected(event -> {
+                if (!row.isEmpty()) {
+                    int index = row.getIndex();
+
+                    Dragboard db = row.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(Integer.toString(index));
+                    db.setContent(content);
+
+                    event.consume();
+                }
+            });
+
+            row.setOnDragOver(event -> {
+                Dragboard db = event.getDragboard();
+
+                if (db != null && db.hasString()) {
+                    int draggedIndex = Integer.parseInt(db.getString());
+                    int thisIndex = row.getIndex();
+
+                    if (draggedIndex != thisIndex) {
+                        event.acceptTransferModes(TransferMode.MOVE);
+                    }
+                }
+
+                event.consume();
+            });
+
+            row.setOnDragDropped(event -> {
+                Dragboard db = event.getDragboard();
+                Playlist playlist = playlister.getSelectionModel().getSelectedItem();
+
+                if (db != null && db.hasString()) {
+                    int draggedIndex = Integer.parseInt(db.getString());
+                    Song draggedSong = sOPData.get(draggedIndex);
+
+                    int dropIndex;
+
+                    if (row.isEmpty()) {
+                        dropIndex = sOPData.size();
+                    } else {
+                        dropIndex = row.getIndex();
+                    }
+
+                    sOPData.remove(draggedIndex);
+                    if (dropIndex > draggedIndex) {
+                        dropIndex--;
+                    }
+
+                    sOPData.add(dropIndex, draggedSong);
+
+                    playlist.getSongs().remove(draggedSong);
+                    playlist.getSongs().add(dropIndex, draggedSong);
+
+                    if (draggedSong == musicPlayer.getCurrentSong() && musicPlayer.getPlaylistSource().equals(playlist)) {
+                        index = dropIndex;
+                    } else if (draggedSong != musicPlayer.getCurrentSong()) {
+                        index = sOPData.indexOf(musicPlayer.getCurrentSong());
+                    }
+
+                    event.setDropCompleted(true);
+                    songsOnPlaylist.getSelectionModel().select(dropIndex);
+                }
+
+                event.consume();
+            });
+
+            return row;
+        });
 
         musicPlayer.setOnEndOfMedia(this::playNextSong);
         volume.setOnMouseDragged(event -> {
@@ -185,25 +265,14 @@ public class myTunesController {
     }
 
     private void playSong(MusicPlayer mp, Song song, Playlist playlist) {
-        if (mp.isPlaying() && mp.getCurrentSong() == song) {
+        if (mp.isPlaying() && mp.getCurrentSong() == song && mp.getPlaylistSource() == playlist) {
             mp.pause();
-        } else if (mp.isPlaying() && mp.getCurrentSong() != song) {
-            mp.play(song, playlist);
+            nowPlaying.setText("");
         } else {
             mp.play(song, playlist);
+            nowPlaying.setText(mp.getCurrentSong().getArtistName() + " - " + mp.getCurrentSong().getSongName());
         }
-
-        nowPlaying.setText(mp.getCurrentSong().getArtistName() + " - " + mp.getCurrentSong().getSongName());
     }
-
-    @FXML
-    private TableColumn<Song, String> songName;
-
-    @FXML
-    private TableView<Song> songsOnPlaylist;
-
-    @FXML
-    private Slider volume;
 
     @FXML
     void next(MouseEvent event) {
