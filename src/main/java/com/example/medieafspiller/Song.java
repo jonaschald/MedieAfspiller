@@ -11,9 +11,6 @@ import javax.sound.sampled.AudioSystem;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-import java.util.logging.Logger;
-
 
 public class Song {
     private String songName = "";

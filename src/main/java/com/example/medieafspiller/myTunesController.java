@@ -73,12 +73,16 @@ public class myTunesController {
     @FXML
     private TableView<Song> songListe = new TableView<>();
 
+    @FXML
+    private ProgressBar progressBar;
+
     private final ObservableList<Song> songData = FXCollections.observableArrayList();
     private final ObservableList<Playlist> playlistData = FXCollections.observableArrayList();
     private final ObservableList<Song> sOPData = FXCollections.observableArrayList();
 
     private final MusicPlayer musicPlayer = new MusicPlayer();
     private int index = 0;
+    private boolean dragging = false;
 
     // For at forklare hvorfor nogle filer ikke virker
     private final String nySangFejl = String.format(
@@ -126,33 +130,67 @@ public class myTunesController {
         songsOnPlaylist.setItems(sOPData);
 
         musicPlayer.setOnEndOfMedia(this::playNextSong);
+        volume.setOnMouseDragged(event -> {
+            double vol = volume.getValue() / 100;
+            vol = Math.min(vol, 1.0);
+
+            musicPlayer.setVolume(vol);
+        });
+
+        progressBar.setOnMouseClicked(this::updateAndResume);
+        progressBar.setOnMouseDragged(this::updateProgress);
+        progressBar.setOnMouseReleased(this::updateAndResume);
+
+        musicPlayer.addListener((obs, oldTime, newTime) -> {
+            if (dragging) return;
+            double prog = newTime.toSeconds() / musicPlayer.getTotalDuration().toSeconds();
+
+            progressBar.setProgress(prog);
+        });
+    }
+
+    private void updateProgress(MouseEvent event) {
+        dragging = true;
+        double mouseX = event.getX();
+        double widthX = progressBar.getWidth();
+
+        double progress = Math.max(0.0, Math.min(1, mouseX / widthX));
+        progressBar.setProgress(progress);
+    }
+
+    private void updateAndResume(MouseEvent event) {
+        updateProgress(event);
+        musicPlayer.setCurrentTime(progressBar.getProgress());
+        dragging = false;
     }
 
     private void playNextSong() {
+        if (sOPData.isEmpty() || sOPData.size() == 1) return;
         if (sOPData.size() - 1 == index) index = -1;
 
         index++;
         songsOnPlaylist.getSelectionModel().select(index);
 
-        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem());
+        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem(), playlister.getSelectionModel().getSelectedItem());
     }
 
     private void playPreviousSong() {
+        if (sOPData.isEmpty() || sOPData.size() == 1) return;
         if (index == 0) index = sOPData.size();
 
         index--;
         songsOnPlaylist.getSelectionModel().select(index);
 
-        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem());
+        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem(), playlister.getSelectionModel().getSelectedItem());
     }
 
-    private void playSong(MusicPlayer mp, Song song) {
+    private void playSong(MusicPlayer mp, Song song, Playlist playlist) {
         if (mp.isPlaying() && mp.getCurrentSong() == song) {
             mp.pause();
         } else if (mp.isPlaying() && mp.getCurrentSong() != song) {
-            mp.play(song);
+            mp.play(song, playlist);
         } else {
-            mp.play(song);
+            mp.play(song, playlist);
         }
 
         nowPlaying.setText(mp.getCurrentSong().getArtistName() + " - " + mp.getCurrentSong().getSongName());
@@ -176,11 +214,12 @@ public class myTunesController {
     void playPause(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
             Song song = songsOnPlaylist.getSelectionModel().getSelectedItem();
+            Playlist playlist = playlister.getSelectionModel().getSelectedItem();
 
-            if (song == null) return;
+            if (song == null || playlist == null) return;
 
             index = songsOnPlaylist.getSelectionModel().getSelectedIndex();
-            playSong(musicPlayer, song);
+            playSong(musicPlayer, song, playlist);
         }
     }
 
@@ -219,6 +258,9 @@ public class myTunesController {
             songsOnPlaylist.sort();
         }
 
+        if (musicPlayer.getCurrentSong() != null && musicPlayer.isPlaying() && musicPlayer.getPlaylistSource().equals(p)) {
+            musicPlayer.stop();
+        }
         playlistData.remove(p);
 
         playlister.refresh();
@@ -232,6 +274,11 @@ public class myTunesController {
 
         if (song != null && playlist != null) {
             playlist.removeSong(song);
+            sOPData.remove(song);
+
+            if (musicPlayer.getCurrentSong() != null && musicPlayer.isPlaying() && musicPlayer.getPlaylistSource().equals(playlist)) {
+                musicPlayer.stop();
+            }
 
             playlister.refresh();
             songsOnPlaylist.refresh();
@@ -244,9 +291,23 @@ public class myTunesController {
         Song selectedSong = songListe.getSelectionModel().getSelectedItem();
 
         if (selectedSong != null) {
+            if (musicPlayer.isPlaying() && musicPlayer.getCurrentSong().getSongURI() == selectedSong.getSongURI()) {
+                musicPlayer.stop();
+            }
+
+            for (Playlist p : playlistData)
+                if (p.getSongs().contains(selectedSong))
+                    p.removeSong(selectedSong);
+
+            sOPData.remove(selectedSong);
             songData.remove(selectedSong);
 
+            songsOnPlaylist.refresh();
+            playlister.refresh();
             songListe.refresh();
+
+            songsOnPlaylist.sort();
+            playlister.sort();
             songListe.sort();
         }
     }
