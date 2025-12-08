@@ -18,7 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -233,6 +233,10 @@ public class myTunesController {
 
             if (playlist != null) {
                 sOPData.setAll(playlist.getSongs());
+
+                if (!searchField.getText().trim().isEmpty()) {
+                    search(null);
+                }
             }
         }
     }
@@ -252,7 +256,18 @@ public class myTunesController {
 
     @FXML
     void search(ActionEvent event) {
+        String search = searchField.getText().toLowerCase();
 
+        if (search.isEmpty() || search.trim().isEmpty()) {
+            songsOnPlaylist.setItems(sOPData);
+            return;
+        }
+
+        List<Song> result = sOPData.stream()
+                .filter(song -> song.getSongName().toLowerCase().contains(search) || song.getArtistName().toLowerCase().contains(search))
+                .toList();
+
+        songsOnPlaylist.setItems(FXCollections.observableList(result));
     }
 
     // Skaber en HBox med noget tekst ved siden af et tekstfelt
