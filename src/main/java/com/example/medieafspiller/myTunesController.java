@@ -16,6 +16,9 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -81,8 +84,8 @@ public class myTunesController {
     @FXML
     private Slider volume;
 
-    private final ObservableList<Song> songData = FXCollections.observableArrayList();
-    private final ObservableList<Playlist> playlistData = FXCollections.observableArrayList();
+    private static final ObservableList<Song> songData = FXCollections.observableArrayList();
+    private static final ObservableList<Playlist> playlistData = FXCollections.observableArrayList();
     private final ObservableList<Song> sOPData = FXCollections.observableArrayList();
 
     private final MusicPlayer musicPlayer = new MusicPlayer();
@@ -228,6 +231,95 @@ public class myTunesController {
 
             progressBar.setProgress(prog);
         });
+
+        // Gem og indlæs data
+        try {
+            ArrayList<SongEntry> loadedSongs = SerializationHelper.loadSongs();
+
+            ArrayList<Song> dat = getSongs(loadedSongs);
+            songData.setAll(dat);
+        } catch (FileNotFoundException ignored) {
+            // Filen med gemte sange er enten slettet eller ikke blevet skabt endnu
+        }
+
+        try {
+            ArrayList<PlaylistEntry> loadedPlaylists = SerializationHelper.loadPlaylists();
+
+            ArrayList<Playlist> dat = getPlaylists(loadedPlaylists);
+            playlistData.setAll(dat);
+        } catch (FileNotFoundException ignored) {}
+    }
+
+    private ArrayList<Song> getSongs(ArrayList<SongEntry> loadedSongs) {
+        ArrayList<Song> dat = new ArrayList<>();
+
+        if (loadedSongs != null && !loadedSongs.isEmpty()) {
+            for (SongEntry entry : loadedSongs) {
+                Song s = new Song();
+                s.setSongFile(entry.file());
+
+                if (s.isValidSong()) {
+                    s.setSongName(entry.name());
+                    s.setArtistName(entry.artist());
+                    dat.add(s);
+                }
+            }
+        }
+        return dat;
+    }
+
+    private ArrayList<Playlist> getPlaylists(ArrayList<PlaylistEntry> loadedPlaylists) {
+        ArrayList<Playlist> dat = new ArrayList<>();
+
+        if (loadedPlaylists != null && !loadedPlaylists.isEmpty()) {
+            for (PlaylistEntry entry : loadedPlaylists) {
+                Playlist p = new Playlist();
+                p.setName(entry.name());
+
+                if (!entry.files().isEmpty()) {
+                    for (SongEntry songEntry : entry.files()) {
+                        songData.stream()
+                                .filter(song -> song.getFilePath().equals(songEntry.file().getAbsolutePath()))
+                                .forEach(p::addSong);
+                    }
+                }
+
+                dat.add(p);
+            }
+        }
+
+        return dat;
+    }
+
+    private static void saveSongs() {
+        ArrayList<SongEntry> files = new ArrayList<>();
+
+        for (Song song : songData) {
+            files.add(new SongEntry(song));
+        }
+
+        SerializationHelper.saveSongs(files);
+    }
+
+    private static void savePlaylists() {
+        ArrayList<PlaylistEntry> playlistSave = new ArrayList<>();
+
+        for (Playlist p : playlistData) {
+            ArrayList<SongEntry> files = new ArrayList<>();
+
+            for (Song song : p.getSongs()) {
+                files.add(new SongEntry(song));
+            }
+
+            playlistSave.add(new PlaylistEntry(p.getName(), files));
+        }
+
+        SerializationHelper.savePlaylists(playlistSave);
+    }
+
+    public static void saveData() {
+        saveSongs();
+        savePlaylists();
     }
 
     private void updateProgress(MouseEvent event) {

@@ -16,4 +16,9 @@ public class myTunesApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+    @Override
+    public void stop() {
+        myTunesController.saveData();
+    }
 }
