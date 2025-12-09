@@ -99,7 +99,7 @@ public class myTunesController {
                     "*%4sFilen kan ikke læses%n" +
                     "*%4sFilen er ikke et understøttet medie%n" +
                     "*%4sFilen er en .wav som ikke har:%n" +
-                    "%4sa.%2sEn sample størrelse på 16%n" +
+                    "%4sa.%2sEn sample størrelse på 16 bit%n" +
                     "%4sb.%2sEn sample rate på 44.1 kHz eller 48 kHz",
             "", "", "", "", "", "", "", ""
     );
