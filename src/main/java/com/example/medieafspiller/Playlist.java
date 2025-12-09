@@ -28,13 +28,20 @@ public class Playlist {
     public void addSong(Song song) {
         this.songs.add(song);
         this.numberOfSongsOnPlaylist++;
-        this.setLengthOfPlaylist(lengthOfPlaylist + song.getRawSongLength());
+        updateLength();
     }
 
     public void removeSong(Song song) {
         this.songs.remove(song);
         this.numberOfSongsOnPlaylist--;
-        this.setLengthOfPlaylist(lengthOfPlaylist - song.getRawSongLength());
+        updateLength();
+    }
+
+    public void updateLength() {
+        this.setLengthOfPlaylist(songs.stream()
+                .mapToLong(Song::getRawSongLength)
+                .sum()
+        );
     }
 
     public String getLengthOfPlaylist() { // Lav tid i sekunder om til HH:MM:SS format

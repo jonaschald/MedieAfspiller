@@ -94,11 +94,13 @@ public class myTunesController {
     // For at forklare hvorfor nogle filer ikke virker
     private final String nySangFejl = String.format(
             "Sangen er ikke valid. Det kan være fordi:%n" +
-                    "%4sFilen kan ikke findes%n" +
-                    "%4sFilen kan ikke læses%n" +
-                    "%4sFilen er ikke et understøttet medie%n" +
-                    "%4sFilen har ikke en sample størrelse på 16 eller en sample rate på 44.1 kHz eller 48 kHz",
-            "", "", "", ""
+                    "*%4sFilen kan ikke findes%n" +
+                    "*%4sFilen kan ikke læses%n" +
+                    "*%4sFilen er ikke et understøttet medie%n" +
+                    "*%4sFilen er en .wav som ikke har:%n" +
+                    "%4sa.%2sEn sample størrelse på 16%n" +
+                    "%4sb.%2sEn sample rate på 44.1 kHz eller 48 kHz",
+            "", "", "", "", "", "", "", ""
     );
 
     public void initialize() {
@@ -215,6 +217,7 @@ public class myTunesController {
             vol = Math.min(vol, 1.0);
 
             musicPlayer.setVolume(vol);
+            event.consume();
         });
 
         progressBar.setOnMouseClicked(this::updateAndResume);
@@ -236,12 +239,16 @@ public class myTunesController {
 
         double progress = Math.max(0.0, Math.min(1, mouseX / widthX));
         progressBar.setProgress(progress);
+        event.consume();
     }
 
     private void updateAndResume(MouseEvent event) {
         updateProgress(event);
         musicPlayer.setCurrentTime(progressBar.getProgress());
         dragging = false;
+
+        if (!event.isConsumed())
+            event.consume();
     }
 
     private void playNextSong() {
@@ -360,7 +367,7 @@ public class myTunesController {
         Song selectedSong = songListe.getSelectionModel().getSelectedItem();
 
         if (selectedSong != null) {
-            if (musicPlayer.isPlaying() && musicPlayer.getCurrentSong().getSongURI() == selectedSong.getSongURI()) {
+            if (musicPlayer.isPlaying() && musicPlayer.getCurrentSong().getSongURI().equals(selectedSong.getSongURI())) {
                 musicPlayer.stop();
             }
 
@@ -420,6 +427,27 @@ public class myTunesController {
                     songData.remove(selectedSong);
                     return;
                 }
+
+                for (Playlist p : playlistData) {
+                    // Playlisten der har sangen vi har ændret ændres automatisk, men hvad så med sange der måske har den samme fil, men ikke er det samme element?
+                    if (!p.getSongs().contains(song) && p.getSongs().stream().anyMatch(s -> s.getSongURI().equals(song.getSongURI()))) {
+                        for (Song s : p.getSongs()) {
+                            if (s != null) {
+                                s.setSongName(song.getSongName());
+                                s.setArtistName(song.getArtistName());
+                                s.setSongFile(new File(song.getFilePath()));
+                                p.updateLength();
+                            }
+                        }
+                    }
+                }
+
+                if (musicPlayer.isPlaying() && musicPlayer.getCurrentSong().getSongURI().equals(song.getSongURI())) {
+                    nowPlaying.setText(song.getArtistName() + " - " + song.getSongName());
+                }
+
+                songsOnPlaylist.refresh();
+                songsOnPlaylist.sort();
 
                 songListe.refresh();
                 songListe.sort();
