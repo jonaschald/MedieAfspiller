@@ -357,24 +357,79 @@ public class myTunesController {
     }
 
     private void playNextSong() {
-        if (sOPData.isEmpty() || sOPData.size() == 1) return;
-        if (sOPData.size() - 1 == index) index = -1;
+        List<Song> dat = (sOPData != musicPlayer.getPlaylistSource().getSongs())
+                ? musicPlayer.getPlaylistSource().getSongs()
+                : sOPData;
+
+        if (dat.isEmpty() || dat.size() == 1) return;
+        if (dat.size() - 1 == index) index = -1;
 
         index++;
-        songsOnPlaylist.getSelectionModel().select(index);
 
-        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem(), playlister.getSelectionModel().getSelectedItem());
+        Song s = dat.get(index);
+
+        if (!s.isValidSong()) {
+            errorWindow(String.format(nySangFejl + "%n*%4sFilen er blevet slettet", ""));
+            removeSong(s);
+
+            index--;
+            if (index < 0) index = dat.size() - 1;
+
+            playNextSong();
+            return;
+        }
+
+        selectSongInUI(s);
+        playSong(musicPlayer, s, musicPlayer.getPlaylistSource());
     }
 
     private void playPreviousSong() {
-        if (sOPData.isEmpty() || sOPData.size() == 1) return;
-        if (index == 0) index = sOPData.size();
+        List<Song> dat = (sOPData != musicPlayer.getPlaylistSource().getSongs())
+                ? musicPlayer.getPlaylistSource().getSongs()
+                : sOPData;
 
+        if (dat.size() <= 1) return;
+
+        Song current = musicPlayer.getCurrentSong();
+        if (current != null) {
+            int idx = dat.indexOf(current);
+            if (idx != -1) index = idx;
+        }
+
+        if (index < 0) index = dat.size() - 1;
         index--;
-        songsOnPlaylist.getSelectionModel().select(index);
 
-        playSong(musicPlayer, songsOnPlaylist.getSelectionModel().getSelectedItem(), playlister.getSelectionModel().getSelectedItem());
+        Song s = dat.get(index);
+
+        if (!s.isValidSong()) {
+            errorWindow(String.format(nySangFejl + "%n*%4sFilen er blevet slettet", ""));
+            removeSong(s);
+
+            if (dat.size() <= 1) return;
+
+            index--;
+            if (index < 0) index = dat.size() - 1;
+
+            playPreviousSong();
+            return;
+        }
+
+        selectSongInUI(s);
+        playSong(musicPlayer, s, musicPlayer.getPlaylistSource());
     }
+
+    private void selectSongInUI(Song s) {
+        if (songsOnPlaylist.getItems() == sOPData
+                || songsOnPlaylist.getItems() == musicPlayer.getPlaylistSource().getSongs()) {
+
+            Platform.runLater(() -> {
+                songsOnPlaylist.getSelectionModel().clearSelection();
+                songsOnPlaylist.getSelectionModel().select(s);
+                songsOnPlaylist.scrollTo(s);
+            });
+        }
+    }
+
 
     private void playSong(MusicPlayer mp, Song song, Playlist playlist) {
         if (mp.isPlaying() && mp.getCurrentSong() == song && mp.getPlaylistSource() == playlist) {
@@ -467,29 +522,53 @@ public class myTunesController {
         }
     }
 
+    private void removeSong(Song s) {
+        List<Song> active =
+                (sOPData != musicPlayer.getPlaylistSource().getSongs())
+                        ? musicPlayer.getPlaylistSource().getSongs()
+                        : sOPData;
+
+        int removedIndex = active.indexOf(s);
+
+        if (musicPlayer.isPlaying()
+                && musicPlayer.getCurrentSong().getSongURI().equals(s.getSongURI())) {
+            musicPlayer.stop();
+        }
+
+        for (Playlist p : playlistData) {
+            p.removeSong(s);
+        }
+
+        sOPData.remove(s);
+        songData.remove(s);
+
+        if (removedIndex != -1 && removedIndex < index) {
+            index--;
+        }
+
+        if (index >= active.size()) {
+            index = active.size() - 1;
+        }
+        if (index < 0 && !active.isEmpty()) {
+            index = 0;
+        }
+
+        songsOnPlaylist.refresh();
+        playlister.refresh();
+        songListe.refresh();
+
+        songsOnPlaylist.sort();
+        playlister.sort();
+        songListe.sort();
+    }
+
+
     @FXML
     void deleteSong(ActionEvent event) {
         Song selectedSong = songListe.getSelectionModel().getSelectedItem();
 
         if (selectedSong != null) {
-            if (musicPlayer.isPlaying() && musicPlayer.getCurrentSong().getSongURI().equals(selectedSong.getSongURI())) {
-                musicPlayer.stop();
-            }
-
-            for (Playlist p : playlistData)
-                if (p.getSongs().contains(selectedSong))
-                    p.removeSong(selectedSong);
-
-            sOPData.remove(selectedSong);
-            songData.remove(selectedSong);
-
-            songsOnPlaylist.refresh();
-            playlister.refresh();
-            songListe.refresh();
-
-            songsOnPlaylist.sort();
-            playlister.sort();
-            songListe.sort();
+            removeSong(selectedSong);
         }
     }
 

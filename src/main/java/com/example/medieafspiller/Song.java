@@ -151,11 +151,9 @@ public class Song {
     private void setSongLength(long length) {
         this.length = length;
     }
-
     public URI getSongURI() {
         return songFile.toURI();
     }
-
     public String getFilePath() {
         return songFile != null ? songFile.getAbsolutePath() : "";
     }
