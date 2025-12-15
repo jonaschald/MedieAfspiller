@@ -17,13 +17,14 @@ import javafx.util.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+record SongData(ArrayList<Song> validSongs, ArrayList<String> invalidSongs) {}
 
 public class myTunesController {
 
@@ -142,6 +143,7 @@ public class myTunesController {
         songsOnPlaylist.setRowFactory(tview -> {
             TableRow<Song> row = new TableRow<>();
 
+            // Brugeren begynder at trække på en sang
             row.setOnDragDetected(event -> {
                 if (!row.isEmpty()) {
                     int index = row.getIndex();
@@ -155,6 +157,7 @@ public class myTunesController {
                 }
             });
 
+            // Når en række bliver holdt over af et drag
             row.setOnDragOver(event -> {
                 Dragboard db = event.getDragboard();
 
@@ -170,6 +173,7 @@ public class myTunesController {
                 event.consume();
             });
 
+            // Når sangen bliver droppet på en række
             row.setOnDragDropped(event -> {
                 Dragboard db = event.getDragboard();
                 Playlist playlist = playlister.getSelectionModel().getSelectedItem();
@@ -236,11 +240,19 @@ public class myTunesController {
         try {
             ArrayList<SongEntry> loadedSongs = SerializationHelper.loadSongs();
 
-            ArrayList<Song> dat = getSongs(loadedSongs);
-            songData.setAll(dat);
-        } catch (FileNotFoundException ignored) {
-            // Filen med gemte sange er enten slettet eller ikke blevet skabt endnu
-        }
+            SongData dat = getSongs(loadedSongs);
+            songData.setAll(dat.validSongs());
+
+            if (!dat.invalidSongs().isEmpty()) {
+                StringBuilder msg = new StringBuilder("Disse sange kunne ikke blive fundet eller læst:\n");
+
+                for (String s : dat.invalidSongs()) {
+                    msg.append(String.format("%n%6s", s));
+                }
+
+                errorWindow(msg.toString());
+            }
+        } catch (FileNotFoundException ignored) {} // Filen med gemte sange er enten slettet eller ikke blevet skabt endnu
 
         try {
             ArrayList<PlaylistEntry> loadedPlaylists = SerializationHelper.loadPlaylists();
@@ -250,8 +262,9 @@ public class myTunesController {
         } catch (FileNotFoundException ignored) {}
     }
 
-    private ArrayList<Song> getSongs(ArrayList<SongEntry> loadedSongs) {
+    private SongData getSongs(ArrayList<SongEntry> loadedSongs) {
         ArrayList<Song> dat = new ArrayList<>();
+        ArrayList<String> invalidSongs = new ArrayList<>();
 
         if (loadedSongs != null && !loadedSongs.isEmpty()) {
             for (SongEntry entry : loadedSongs) {
@@ -262,10 +275,12 @@ public class myTunesController {
                     s.setSongName(entry.name());
                     s.setArtistName(entry.artist());
                     dat.add(s);
+                } else {
+                    invalidSongs.add(s.getFilePath());
                 }
             }
         }
-        return dat;
+        return new SongData(dat, invalidSongs);
     }
 
     private ArrayList<Playlist> getPlaylists(ArrayList<PlaylistEntry> loadedPlaylists) {
