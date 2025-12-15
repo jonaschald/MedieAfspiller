@@ -1,7 +1,5 @@
 package com.example.medieafspiller;
 
-import javafx.util.Pair;
-
 import java.io.*;
 import java.util.ArrayList;
 

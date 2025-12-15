@@ -530,6 +530,7 @@ public class myTunesController {
             newSongDialog("Edit Song", selectedSong, song -> {
                 if (!song.isValidSong()) {
                     songData.remove(selectedSong);
+                    errorWindow(nySangFejl);
                     return;
                 }
 
@@ -579,6 +580,7 @@ public class myTunesController {
     void newSong(ActionEvent event) {
         newSongDialog("New Song", null, song -> {
             if (!song.isValidSong()) { // filen eksistere ikke
+                errorWindow(nySangFejl);
                 return;
             }
 
@@ -615,7 +617,7 @@ public class myTunesController {
         label.setWrapText(true);
 
         dialog.getDialogPane().setContent(label);
-        dialog.show();
+        dialog.showAndWait();
     }
 
     // Skaber en HBox med noget tekst ved siden af et tekstfelt
