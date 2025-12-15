@@ -430,8 +430,13 @@ public class myTunesController {
         }
     }
 
-
     private void playSong(MusicPlayer mp, Song song, Playlist playlist) {
+        if (!song.isValidSong()) {
+            errorWindow(String.format(nySangFejl + "%n*%4sFilen er blevet slettet", ""));
+            removeSong(song);
+            return;
+        }
+
         if (mp.isPlaying() && mp.getCurrentSong() == song && mp.getPlaylistSource() == playlist) {
             mp.pause();
             nowPlaying.setText("");
@@ -523,10 +528,14 @@ public class myTunesController {
     }
 
     private void removeSong(Song s) {
-        List<Song> active =
-                (sOPData != musicPlayer.getPlaylistSource().getSongs())
-                        ? musicPlayer.getPlaylistSource().getSongs()
-                        : sOPData;
+        Playlist source = musicPlayer.getPlaylistSource();
+        List<Song> active;
+
+        if (source != null) {
+            active = source.getSongs();
+        } else {
+            active = sOPData;
+        }
 
         int removedIndex = active.indexOf(s);
 
