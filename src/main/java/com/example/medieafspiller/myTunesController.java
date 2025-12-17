@@ -29,25 +29,16 @@ record SongData(ArrayList<Song> validSongs, ArrayList<String> invalidSongs) {}
 public class myTunesController {
 
     @FXML
-    private ImageView back;
-
-    @FXML
     private TableColumn<Playlist, String> lengthOfPlaylist;
 
     @FXML
     private TableColumn<Playlist, String> nameOfPlaylist;
 
     @FXML
-    private ImageView next;
-
-    @FXML
     private Label nowPlaying;
 
     @FXML
     private TableColumn<Playlist, String> numberOfSongsOnPlaylist;
-
-    @FXML
-    private ImageView playPause;
 
     @FXML
     private TableView<Playlist> playlister;
@@ -545,7 +536,8 @@ public class myTunesController {
         }
 
         for (Playlist p : playlistData) {
-            p.removeSong(s);
+            if (p.getSongs().contains(s))
+                p.removeSong(s);
         }
 
         sOPData.remove(s);
