@@ -71,15 +71,12 @@ public class MusicPlayer {
     }
 
     public void setVolume(double volume) {
+        volume = Math.max(0.0, Math.min(volume, 1.0));
+        this.volume = volume;
+
         if (mediaPlayer != null) {
-            volume = clamp(volume, 0.0, 1.0);
-            this.volume = volume;
             mediaPlayer.setVolume(volume);
         }
-    }
-
-    private double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(value, max));
     }
 
     public double getVolume() {
